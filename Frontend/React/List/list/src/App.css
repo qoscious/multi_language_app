@@ -1,0 +1,79 @@
+/* src/App.css */
+
+/* Basic CSS for layout and styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #007BFF;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.btn {
+  padding: 6px 12px;
+  margin: 2px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #007BFF;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}

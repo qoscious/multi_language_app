@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Basic CSS for layout and styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .btn {
+      padding: 6px 12px;
+      margin: 2px;
+      text-decoration: none;
+      color: #fff;
+      background-color: #007BFF;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    form {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 4px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>List Manager</h1>
+  
+  <!-- Table to display list items -->
+  <table id="listTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>List Item</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="listTableBody">
+      <tr>
+        <td colspan="3">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- Add Form -->
+  <form id="addForm">
+    <h2>Add New List</h2>
+    <div class="form-group">
+      <label for="addListInput">List Item:</label>
+      <input type="text" id="addListInput" required>
+    </div>
+    <button type="submit" class="btn">Add List</button>
+  </form>
+  
+  <!-- Update Form (hidden by default) -->
+  <form id="updateForm" class="hidden">
+    <h2>Update List</h2>
+    <div class="form-group">
+      <label for="updateListInput">List Item:</label>
+      <input type="text" id="updateListInput" required>
+    </div>
+    <button type="submit" class="btn">Update List</button>
+    <button type="button" class="btn" id="cancelUpdateBtn">Cancel</button>
+  </form>
+  
+  <script>
+    const API_BASE = 'http://localhost:3000';
+    
+    // Get DOM elements
+    const listTableBody = document.getElementById('listTableBody');
+    
+    // Add form elements
+    const addForm = document.getElementById('addForm');
+    const addListInput = document.getElementById('addListInput');
+    
+    // Update form elements
+    const updateForm = document.getElementById('updateForm');
+    const updateListInput = document.getElementById('updateListInput');
+    const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
+    
+    // Current editing item ID (if any)
+    let currentEditId = null;
+    
+    // ==========================
+    // List Loading Functionality
+    // ==========================
+    async function loadLists() {
+      try {
+        const response = await fetch(`${API_BASE}/lists`);
+        if (!response.ok) {
+          listTableBody.innerHTML = `<tr><td colspan="3">Error fetching lists.</td></tr>`;
+          return;
+        }
+        const lists = await response.json();
+        if (lists.length === 0) {
+          listTableBody.innerHTML = `<tr><td colspan="3">No lists available.</td></tr>`;
+        } else {
+          listTableBody.innerHTML = '';
+          lists.forEach((item, index) => {
+            const row = document.createElement('tr');
+            // Escape any single quotes in item.list (for inline handlers)
+            const escapedItem = item.list.replace(/'/g, "\\'");
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${item.list}</td>
+              <td>
+                <button class="btn" onclick="showUpdateForm('${item._id}', '${escapedItem}')">Update</button>
+                <button class="btn btn-danger" onclick="deleteList('${item._id}')">Delete</button>
+              </td>
+            `;
+            listTableBody.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        listTableBody.innerHTML = `<tr><td colspan="3">Error fetching lists.</td></tr>`;
+      }
+    }
+    
+    // ==========================
+    // Add List Functionality
+    // ==========================
+    addForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const listValue = addListInput.value.trim();
+      if (!listValue) return;
+      try {
+        const response = await fetch(`${API_BASE}/lists`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ list: listValue })
+        });
+        if (response.ok) {
+          alert('List added successfully');
+          addForm.reset();
+          loadLists();
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.error || 'Failed to add list'}`);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error adding list');
+      }
+    });
+    
+    // ==========================
+    // Update List Functionality
+    // ==========================
+    updateForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const listValue = updateListInput.value.trim();
+      if (!listValue || !currentEditId) return;
+      try {
+        const response = await fetch(`${API_BASE}/lists/${currentEditId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ list: listValue })
+        });
+        if (response.ok) {
+          alert('List updated successfully');
+          hideUpdateForm();
+          loadLists();
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.error || 'Failed to update list'}`);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error updating list');
+      }
+    });
+    
+    // Cancel update and revert back to Add mode
+    cancelUpdateBtn.addEventListener('click', hideUpdateForm);
+    
+    // Show the update form and hide the add form
+    function showUpdateForm(id, listValue) {
+      currentEditId = id;
+      updateListInput.value = listValue;
+      updateForm.classList.remove('hidden');
+      addForm.classList.add('hidden');
+    }
+    
+    // Hide the update form and show the add form
+    function hideUpdateForm() {
+      currentEditId = null;
+      updateForm.reset();
+      updateForm.classList.add('hidden');
+      addForm.classList.remove('hidden');
+    }
+    
+    // ==========================
+    // Delete List Functionality
+    // ==========================
+    async function deleteList(id) {
+      if (!confirm('Are you sure you want to delete this item?')) return;
+      try {
+        const response = await fetch(`${API_BASE}/lists/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+          alert('List deleted successfully');
+          loadLists();
+        } else {
+          alert('Failed to delete list.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error deleting list.');
+      }
+    }
+    
+    // Expose functions for inline onclick handlers
+    window.showUpdateForm = showUpdateForm;
+    window.deleteList = deleteList;
+    
+    // ==========================
+    // Initial Load
+    // ==========================
+    loadLists();
+  </script>
+</body>
+</html>

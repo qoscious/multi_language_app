@@ -1,0 +1,40 @@
+*.log
+.DS_Store
+Thumbs.db
+
+# Node.js
+/Backend/NodeJS/listMongo/node_modules/
+/Backend/NodeJS/listMongoose/node_modules/
+/Backend/NodeJS/listPostgreSQL/node_modules/
+
+# Python
+/Backend/Python/listFastAPIMongoDB/__pycache__/
+/Backend/Python/listFastAPIMongoDB/venv/
+/Backend/Python/listFastAPIPostgreSQL/__pycache__/
+/Backend/Python/listFastAPIPostgreSQL/venv/
+
+# Java
+/Backend/Java/listJavaMongoDB/target/
+/Backend/Java/listJavaPostgreSQL/target/
+
+# Rust
+/Backend/Rust/RustMongoDB/target/
+/Backend/Rust/RustMongoDB/Cargo.lock
+/Backend/Rust/RustPostgreSQL/target/
+/Backend/Rust/RustPostgreSQL/Cargo.lock
+
+# PHP
+/Backend/PHP/PHPMongoDB/vendor/
+/Backend/PHP/PHPPostgreSQL/vendor/
+
+# C#
+/Backend/C#/
+
+
+# React
+/Frontend/React/contacts/
+/Frontend/React/keyval/
+/Frontend/React/Keyvals/
+/Frontend/React/List/list/node_modules
+
+

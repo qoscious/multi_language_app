@@ -1,0 +1,10 @@
+{
+    "name": "hadron/phpmongodb",
+    "type": "n",
+    "license": "n",
+    "require": {
+        "slim/slim": "^4.14",
+        "slim/psr7": "^1.7",
+        "mongodb/mongodb": "^1.15"
+    }
+}
