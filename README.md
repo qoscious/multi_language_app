@@ -1,16 +1,34 @@
-# 🗂️ Multi-Language Simple List Web App 
+# 🗂️ Multi-Language Simple List Web App
 
-This repository contains simple backend (with frontend) applications written in various languages (Node.js, Python, C, C++, Java, Rust, C#) that implement a basic list manager using REST APIs and persistent storage.
+This repository demonstrates a simple CRUD-based list manager implemented in various programming languages, including **Node.js, Python, C, C++, Java, Rust**, and **C#**, with **MongoDB** or **PostgreSQL** as the backend database.
 
----
-
-## 📦 Project Structure
-
-Each subdirectory contains the same backend logic implemented in a different programming language, connected to either MongoDB or PostgreSQL.
+Each backend exposes a RESTful API and shares consistent functionality and data structure. All of that backend can be connected to the same minimal frontend implementation.
 
 ---
 
-## 📚 Database Configuration
+## 📁 Project Structure
+
+The project is organized by language and database type:
+
+```
+Backend/
+  ├── C/
+  ├── C++/
+  ├── Go/
+  ├── Java/
+  ├── NodeJS/
+  ├── PHP/
+  ├── Python/
+  ├── Rust/
+
+Frontend/
+  ├── React/
+  ├── VanillaJS/
+```
+
+---
+
+## 🛠️ Database Configuration
 
 ### 🟢 MongoDB
 
@@ -18,7 +36,7 @@ Each subdirectory contains the same backend logic implemented in a different pro
 - **Database**: `listdb`
 - **Collection**: `lists`
 
-**Sample Response**:
+**Sample MongoDB Response**:
 ```json
 [
   {
@@ -26,28 +44,41 @@ Each subdirectory contains the same backend logic implemented in a different pro
     "list": "Some list"
   }
 ]
+```
 
-### 🟢 PostgreSQL
+---
 
-url: postgresql://listuser:listpassword@localhost:5432/listdb
-database: listdb
-table: lists
-username: listuser
-password: listpassword
-lists:
+### 🟣 PostgreSQL
+
+```sql
+-- Connection URL
+postgresql://listuser:listpassword@localhost:5432/listdb
+
+-- Credentials
+Username: listuser
+Password: listpassword
+
+-- Database: listdb
+-- Table: lists
+CREATE TABLE lists (
   id SERIAL PRIMARY KEY,
   list VARCHAR(200) NOT NULL
+);
 
-REST response format:
+-- Sample Response (JSON)
 [
   {
     "id": 7,
     "list": "Some list"
   }
 ]
+```
 
+---
 
+## 📡 Sample API Usage
 
+```bash
 # Create a new list item
 curl -X POST http://localhost:3000/lists \
   -H "Content-Type: application/json" \
@@ -66,4 +97,4 @@ curl -X PUT http://localhost:3000/lists/<id> \
 
 # Delete a list item
 curl -X DELETE http://localhost:3000/lists/<id>
-
+```
